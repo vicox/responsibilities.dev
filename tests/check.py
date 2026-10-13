@@ -147,9 +147,18 @@ for phrase in (
     "Case instructions",
     "Persistent cases",
     "Work in progress for days",
-    "early experiment, not a finished product",
+    "Blocked dependencies",
+    "Recurring customer complaints",
+    "People are accountable.",
 ):
     check(phrase in html, f"index.html: missing text: {phrase}")
+
+# Wording: the site presents a concept, not an app, prototype or experiment, and does not name
+# the internal implementation
+for name in (*PAGES, "styles.css", "README.md"):
+    text = (ROOT / name).read_text(encoding="utf-8")
+    for word in ("rfj", "experiment", "prototype", "sketch", r"the app\b", "being tested"):
+        check(not re.search(rf"\b{word}", text, re.I), f"{name}: unwanted wording: {word}")
 
 # The Impressum: German, marked as such, with an address and a contact email
 html, page = pages["impressum.html"]

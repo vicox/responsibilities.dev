@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Give AI agents responsibilities, not just tasks · responsibilities.dev</title>
-  <meta name="description" content="A technical concept for AI agents with ongoing responsibilities: observe deterministically, judge probabilistically, remember persistently. Signals, case instructions and persistent cases.">
+  <meta name="description" content="An architecture for AI agents with ongoing responsibilities: deterministic signals, probabilistic case instructions, persistent cases and people who stay accountable.">
   <link rel="canonical" href="https://responsibilities.dev/">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#f7f5f0" media="(prefers-color-scheme: light)">
@@ -13,7 +13,7 @@
   <meta property="og:site_name" content="responsibilities.dev">
   <meta property="og:url" content="https://responsibilities.dev/">
   <meta property="og:title" content="Give AI agents responsibilities, not just tasks">
-  <meta property="og:description" content="Observe deterministically. Judge probabilistically. Remember persistently. A technical concept for agents whose work never finishes.">
+  <meta property="og:description" content="Observe deterministically. Judge probabilistically. Remember persistently. An architecture for AI agents whose work never finishes.">
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
@@ -30,6 +30,7 @@
           <li><a href="#principles">Principles</a></li>
           <li><a href="#model">Model</a></li>
           <li><a href="#example">Examples</a></li>
+          <li><a href="#accountability">Accountability</a></li>
         </ul>
       </nav>
     </div>
@@ -38,9 +39,9 @@
   <main id="main" tabindex="-1">
     <section class="hero" aria-labelledby="hero-title">
       <div class="wrap">
-        <p class="eyebrow">A technical concept</p>
+        <p class="eyebrow">Agent architecture</p>
         <h1 id="hero-title">Give AI agents responsibilities, not just&nbsp;tasks.</h1>
-        <p class="lede">A task ends when it is done. A responsibility keeps going: something to watch over, to notice changes in and to keep track of, for days rather than for one prompt. This page describes a small model for building that, and an early experiment that tests it.</p>
+        <p class="lede">A task ends when it is done. A responsibility holds: the agent watches over something for days rather than for one prompt, notices when it changes and keeps track of what it has found. People stay accountable for what happens next.</p>
         <p class="motto">
           <span>Observe deterministically.</span>
           <span>Judge probabilistically.</span>
@@ -70,7 +71,7 @@
           <article class="card card-accent">
             <h3>A responsibility</h3>
             <dl>
-              <dt>Starts</dt><dd>When it is defined, and then holds.</dd>
+              <dt>Starts</dt><dd>When it is defined.</dd>
               <dt>Ends</dt><dd>Only when it is withdrawn.</dd>
               <dt>Looks at</dt><dd>The same signals, on every run.</dd>
               <dt>Remembers</dt><dd>Every case it opened, and why.</dd>
@@ -95,7 +96,7 @@
           </li>
           <li>
             <h3>Judge probabilistically.</h3>
-            <p>Deciding whether a situation deserves attention, and saying why, is where a language model helps. It proposes; it does not have the last word. Code checks each proposal: that its subject is eligible, that it is well-formed and that it cites evidence that was actually stored.</p>
+            <p>Deciding whether a situation deserves attention, and saying why, is work for a language model. It proposes; it does not have the last word. Code checks each proposal: that its subject is eligible, that it is well-formed and that it cites evidence that was actually recorded.</p>
           </li>
           <li>
             <h3>Remember persistently.</h3>
@@ -110,7 +111,7 @@
         <div class="section-head">
           <p class="eyebrow">03</p>
           <h2 id="model-title">Signals, case instructions, cases</h2>
-          <p>A responsibility is defined by what to observe and what deserves attention. What it produces is cases.</p>
+          <p>A responsibility is defined by what to observe and what deserves attention. What it produces is cases, for people to act on.</p>
         </div>
         <ol class="flow" role="list">
           <li>
@@ -126,7 +127,7 @@
           <li>
             <p class="tag">Remember</p>
             <h3>Persistent cases</h3>
-            <p>Proposals that pass a deterministic check become cases. A case names the subject that needs attention, cites its evidence and stays open until the observations change.</p>
+            <p>Proposals that pass a deterministic check become cases. A case names the situation that needs attention and cites its evidence. It stays open, collecting new evidence, until a rule the responsibility defines resolves it.</p>
           </li>
         </ol>
       </div>
@@ -135,13 +136,13 @@
     <section id="example" class="section" aria-labelledby="example-title">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow">04 · Early implementation</p>
+          <p class="eyebrow">04</p>
           <h2 id="example-title">Example: “Work in progress for days”</h2>
-          <p>The first experiment is an early Jira Cloud app, built to test this model on one concrete problem: work that sits In Progress and quietly stops moving.</p>
+          <p>Work that sits In Progress and quietly stops moving is easy to overlook. Here is the responsibility for it in full, with Jira as the system being watched.</p>
         </div>
 
         <figure class="spec">
-          <figcaption>The original experiment’s responsibility, with its built-in instructions abridged</figcaption>
+          <figcaption>The responsibility, defined</figcaption>
           <dl>
             <div>
               <dt>Responsibility</dt>
@@ -153,101 +154,97 @@
             </div>
             <div>
               <dt>Signal</dt>
-              <dd>Issue is in an In Progress status in one project<br><code>project = &lt;project id&gt; AND statusCategory = 4</code></dd>
+              <dd>Issues in an In Progress status<br><code>statusCategory = "In Progress"</code></dd>
             </div>
             <div>
-              <dt>Observation rule</dt>
-              <dd>A case can open only once an issue has matched on <var>N</var> observation days. <var>N</var> is set per responsibility.</dd>
+              <dt>Hard rule</dt>
+              <dd>A case can open only after an issue has matched on <var>N</var> observation days, a threshold the team sets.</dd>
             </div>
             <div>
               <dt>Case instructions</dt>
               <dd>
                 <blockquote>
-                  <p>Work should not stay in progress for too long. […] Title it after the work item, in plain language. In the description, say which work item it is and how long [the app] has observed it, using only the evidence given. In the explanation, say which Signals matched on which days, and cite that evidence. Don’t guess why the work is stuck.</p>
+                  <p>Title the case after the work item, in plain language. In the description, say which work item it is and for how many days it has been observed, using only the evidence given. In the explanation, say which signals matched on which days, and cite that evidence. Don’t guess why the work is stuck.</p>
                 </blockquote>
               </dd>
             </div>
             <div>
               <dt>Case</dt>
-              <dd>At most one open case per issue. It resolves when a later observation no longer finds the issue.</dd>
+              <dd>At most one open case per issue. It resolves when a later run no longer finds the issue In Progress.</dd>
             </div>
           </dl>
         </figure>
 
         <h3 class="subhead">How a run works</h3>
         <ol class="steps" role="list">
-          <li>Once a day, the app runs the stored JQL query (an hourly trigger retries until that day’s run has completed). Each matching issue is recorded as an observation for that day.</li>
-          <li>When an issue has matched on enough observation days and has no open case, a language model drafts a case proposal from the instructions and the recorded evidence.</li>
-          <li>A deterministic reconciler opens the case only if the proposal is about one of the eligible issues and cites evidence the app actually stored. Nothing the model returns sets a status.</li>
-          <li>When a later run no longer finds the issue, the app resolves the case itself and keeps the days and evidence that led to it.</li>
+          <li>Once a day, the stored query runs. Each issue it finds is recorded as an observation for that day.</li>
+          <li>When an issue has matched on enough days and has no open case, a language model drafts a case proposal from the instructions and the recorded evidence.</li>
+          <li>Code checks the proposal: it must be about an eligible issue and cite only evidence that was actually recorded. Only then does the case open; the model never sets a case’s status.</li>
+          <li>The team sees which work has stayed In Progress, for how many observed days and on what evidence, and decides what to do. When a later run no longer finds the issue, the case resolves and keeps its history.</li>
         </ol>
-
-        <aside class="note" aria-labelledby="note-title">
-          <h3 id="note-title">Where it stands</h3>
-          <p>The app is an early experiment, not a finished product. Its signals are JQL queries, each scoped to one Jira project. It observes, opens and resolves cases; it does not change issues or act on the work, so what happens next is up to people. A Jira admin can describe a new responsibility to an assistant that drafts it, but the draft only takes effect once the admin approves it.</p>
-        </aside>
       </div>
     </section>
 
-    <section id="sketches" class="section" aria-labelledby="sketches-title">
+    <section id="more-examples" class="section" aria-labelledby="more-examples-title">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow">05 · Illustrative</p>
-          <h2 id="sketches-title">Two more responsibilities, sketched</h2>
-          <p>The same split should carry over to other work that never finishes. These two sketches illustrate the general model; they are not capabilities of the current Jira app, and neither has been built or tested. The first stays in Jira. The second assumes a signal from a support system outside Jira.</p>
+          <p class="eyebrow">05</p>
+          <h2 id="more-examples-title">Two more responsibilities</h2>
+          <p>The same split carries over to other work that never finishes. The first draws its signal from Jira, the second from a support system.</p>
         </div>
         <div class="compare">
-          <article class="card sketch">
-            <p class="tag">Illustrative · Jira</p>
+          <article class="card example-card">
+            <p class="tag">Jira</p>
             <h3>Blocked dependencies</h3>
             <p class="intent">“Make sure blocked work doesn’t wait unnoticed.”</p>
             <dl>
               <dt>Signal</dt>
-              <dd>Issues marked as blocked, and issues with an “is blocked by” link to an issue that is still unresolved. Each day’s matches are recorded, so the evidence shows how long every block has held.</dd>
+              <dd>Issues flagged as blocked, and issues with an “is blocked by” link to an issue that is still unresolved. Each day’s matches are recorded, so the evidence shows how long every block has held.</dd>
               <dt>Case instructions</dt>
               <dd>“Say whether the blocker belongs to another team, what else is waiting on it and whether it is worth escalating. Cite the days and links observed. Don’t guess why it is blocked.”</dd>
               <dt>Case</dt>
               <dd>One per blocked issue, with its blockers and the days they were seen. It stays open while the block holds and resolves when a later run no longer finds the block.</dd>
             </dl>
           </article>
-          <article class="card sketch">
-            <p class="tag">Illustrative · Support data</p>
+          <article class="card example-card">
+            <p class="tag">Support system</p>
             <h3>Recurring customer complaints</h3>
             <p class="intent">“Make sure a problem many customers report is seen as one problem.”</p>
             <dl>
               <dt>Signal</dt>
               <dd>New support tickets that match a stored filter, such as a product area or tag, recorded by day. The query decides which tickets are looked at, not which ones belong together.</dd>
               <dt>Case instructions</dt>
-              <dd>“Group tickets that describe the same problem. Say whether a group points to something systemic, such as a defect or a confusing change, or is a set of unrelated complaints. Cite every ticket you group.”</dd>
+              <dd>“Group tickets that describe the same problem, and say whether a group points to something systemic, such as a defect or a confusing change. Cite every ticket you group.”</dd>
               <dt>Case</dt>
-              <dd>One per pattern, not per ticket. New tickets that fit are added as evidence, so the case shows when the problem began and how it grew. It resolves once no new ticket has fitted for a set number of days.</dd>
+              <dd>One per problem, not per ticket. New tickets that fit are added as evidence, so the case shows when the problem began and how it grew. It resolves once no new ticket has fitted for a set number of days.</dd>
             </dl>
           </article>
         </div>
       </div>
     </section>
 
-    <section id="scope" class="section" aria-labelledby="scope-title">
+    <section id="accountability" class="section" aria-labelledby="accountability-title">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow">06</p>
-          <h2 id="scope-title">What this is, and what it isn’t</h2>
+          <h2 id="accountability-title">Agents are responsible. People are accountable.</h2>
+          <p>A responsibility makes an agent responsible for keeping watch: noticing, judging and remembering, run after run. Accountability for the outcome stays with people. They decide what the agent watches, and they decide what happens next.</p>
         </div>
         <div class="columns">
           <div>
-            <h3>It is</h3>
+            <h3>The agent</h3>
             <ul>
-              <li>A way to structure agent work that never finishes.</li>
-              <li>A split that keeps each part checkable: signals are plain queries that can be re-run, judgments compared with their evidence, cases traced through their history.</li>
-              <li>A model that is being tested on a real, narrow problem before it is generalised.</li>
+              <li>Runs the signals on a schedule and records what they find.</li>
+              <li>Proposes cases, each citing its evidence. Code, not the model, decides which ones open.</li>
+              <li>Keeps every case, open or resolved, with the history that led to it.</li>
             </ul>
           </div>
           <div>
-            <h3>It isn’t</h3>
+            <h3>People</h3>
             <ul>
-              <li>A claim that agents can be left to run on their own. A responsibility narrows what an agent watches and how it reports; it does not hand over the work.</li>
-              <li>A product page. The Jira implementation exists to test the concept.</li>
-              <li>Finished. Acting on cases, signals from more than one system and how responsibilities should be reviewed are open questions.</li>
+              <li>Define the intent, the signals and the case instructions. An agent can draft a responsibility, but it takes effect only once a person approves it.</li>
+              <li>Decide what to do about each case. Reassigning work, escalating a blocker or fixing a defect is their call, not the agent’s.</li>
+              <li>Can check any case: re-run its query, compare the judgment with its evidence and follow its history.</li>
             </ul>
           </div>
         </div>
@@ -257,7 +254,7 @@
 
   <footer class="site-footer">
     <div class="wrap footer-inner">
-      <p><span class="brand-text">responsibilities.dev</span> · A concept, written down while it is being tested.</p>
+      <p><span class="brand-text">responsibilities.dev</span> · Give AI agents responsibilities, not just tasks.</p>
       <a href="impressum.html">Impressum</a>
     </div>
   </footer>

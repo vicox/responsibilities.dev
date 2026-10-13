@@ -26,7 +26,8 @@ Impressum's `mailto:` contact.
 
 The checks cover, on both pages, well-formed markup, one `h1` and no skipped heading levels,
 the meta tags, a link to the Impressum, and that every link resolves (anchors on the other
-page included) and nothing external is loaded; plus the Impressum's required parts, the
+page included) and nothing external is loaded; plus the home page's key content, a list of
+words the site does not use, the Impressum's required parts, the
 `CNAME`, and WCAG AA contrast of the colour pairs in both colour schemes.
 
 ## Deploy on GitHub Pages
