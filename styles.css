@@ -346,7 +346,8 @@ h3 {
   transform: translateY(-50%) rotate(45deg);
 }
 
-.flow .tag {
+.flow .tag,
+.sketch .tag {
   display: inline-block;
   margin: 0 0 0.9rem;
   padding: 0.15rem 0.6rem;
@@ -495,6 +496,33 @@ h3 {
 .note p {
   margin: 0.5rem 0 0;
   color: var(--muted);
+}
+
+/* Illustrative examples: dashed, like the note, because they are not built. */
+
+.sketch {
+  border-style: dashed;
+}
+
+.sketch .intent {
+  margin: 0.6rem 0 0;
+  color: var(--muted);
+}
+
+.sketch dl {
+  display: block;
+}
+
+.sketch dt {
+  padding-top: 0;
+}
+
+.sketch dt + dd {
+  margin-top: 0.25rem;
+}
+
+.sketch dd + dt {
+  margin-top: 1rem;
 }
 
 /* Scope */

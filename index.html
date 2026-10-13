@@ -29,7 +29,7 @@
           <li><a href="#tasks">Tasks</a></li>
           <li><a href="#principles">Principles</a></li>
           <li><a href="#model">Model</a></li>
-          <li><a href="#example">Example</a></li>
+          <li><a href="#example">Examples</a></li>
         </ul>
       </nav>
     </div>
@@ -137,7 +137,7 @@
         <div class="section-head">
           <p class="eyebrow">04 · Early implementation</p>
           <h2 id="example-title">Example: “Work in progress for days”</h2>
-          <p>The first experiment runs in Jira Cloud as rfj, an early app built to test this model on one concrete problem: work that sits In Progress and quietly stops moving.</p>
+          <p>The first experiment is an early Jira Cloud app, built to test this model on one concrete problem: work that sits In Progress and quietly stops moving.</p>
         </div>
 
         <figure class="spec">
@@ -163,7 +163,7 @@
               <dt>Case instructions</dt>
               <dd>
                 <blockquote>
-                  <p>Work should not stay in progress for too long. […] Title it after the work item, in plain language. In the description, say which work item it is and how long rfj has observed it, using only the evidence given. In the explanation, say which Signals matched on which days, and cite that evidence. Don’t guess why the work is stuck.</p>
+                  <p>Work should not stay in progress for too long. […] Title it after the work item, in plain language. In the description, say which work item it is and how long [the app] has observed it, using only the evidence given. In the explanation, say which Signals matched on which days, and cite that evidence. Don’t guess why the work is stuck.</p>
                 </blockquote>
               </dd>
             </div>
@@ -176,23 +176,61 @@
 
         <h3 class="subhead">How a run works</h3>
         <ol class="steps" role="list">
-          <li>Once a day, rfj runs the stored JQL query (an hourly trigger retries until that day’s run has completed). Each matching issue is recorded as an observation for that day.</li>
+          <li>Once a day, the app runs the stored JQL query (an hourly trigger retries until that day’s run has completed). Each matching issue is recorded as an observation for that day.</li>
           <li>When an issue has matched on enough observation days and has no open case, a language model drafts a case proposal from the instructions and the recorded evidence.</li>
-          <li>A deterministic reconciler opens the case only if the proposal is about one of the eligible issues and cites evidence rfj actually stored. Nothing the model returns sets a status.</li>
-          <li>When a later run no longer finds the issue, rfj resolves the case itself and keeps the days and evidence that led to it.</li>
+          <li>A deterministic reconciler opens the case only if the proposal is about one of the eligible issues and cites evidence the app actually stored. Nothing the model returns sets a status.</li>
+          <li>When a later run no longer finds the issue, the app resolves the case itself and keeps the days and evidence that led to it.</li>
         </ol>
 
         <aside class="note" aria-labelledby="note-title">
           <h3 id="note-title">Where it stands</h3>
-          <p>rfj is an early experiment, not a finished product. Its signals are JQL queries, each scoped to one Jira project. It observes, opens and resolves cases; it does not change issues or act on the work, so what happens next is up to people. A Jira admin can describe a new responsibility to an assistant that drafts it, but the draft only takes effect once the admin approves it.</p>
+          <p>The app is an early experiment, not a finished product. Its signals are JQL queries, each scoped to one Jira project. It observes, opens and resolves cases; it does not change issues or act on the work, so what happens next is up to people. A Jira admin can describe a new responsibility to an assistant that drafts it, but the draft only takes effect once the admin approves it.</p>
         </aside>
+      </div>
+    </section>
+
+    <section id="sketches" class="section" aria-labelledby="sketches-title">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">05 · Illustrative</p>
+          <h2 id="sketches-title">Two more responsibilities, sketched</h2>
+          <p>The same split should carry over to other work that never finishes. These two sketches illustrate the general model; they are not capabilities of the current Jira app, and neither has been built or tested. The first stays in Jira. The second assumes a signal from a support system outside Jira.</p>
+        </div>
+        <div class="compare">
+          <article class="card sketch">
+            <p class="tag">Illustrative · Jira</p>
+            <h3>Blocked dependencies</h3>
+            <p class="intent">“Make sure blocked work doesn’t wait unnoticed.”</p>
+            <dl>
+              <dt>Signal</dt>
+              <dd>Issues marked as blocked, and issues with an “is blocked by” link to an issue that is still unresolved. Each day’s matches are recorded, so the evidence shows how long every block has held.</dd>
+              <dt>Case instructions</dt>
+              <dd>“Say whether the blocker belongs to another team, what else is waiting on it and whether it is worth escalating. Cite the days and links observed. Don’t guess why it is blocked.”</dd>
+              <dt>Case</dt>
+              <dd>One per blocked issue, with its blockers and the days they were seen. It stays open while the block holds and resolves when a later run no longer finds the block.</dd>
+            </dl>
+          </article>
+          <article class="card sketch">
+            <p class="tag">Illustrative · Support data</p>
+            <h3>Recurring customer complaints</h3>
+            <p class="intent">“Make sure a problem many customers report is seen as one problem.”</p>
+            <dl>
+              <dt>Signal</dt>
+              <dd>New support tickets that match a stored filter, such as a product area or tag, recorded by day. The query decides which tickets are looked at, not which ones belong together.</dd>
+              <dt>Case instructions</dt>
+              <dd>“Group tickets that describe the same problem. Say whether a group points to something systemic, such as a defect or a confusing change, or is a set of unrelated complaints. Cite every ticket you group.”</dd>
+              <dt>Case</dt>
+              <dd>One per pattern, not per ticket. New tickets that fit are added as evidence, so the case shows when the problem began and how it grew. It resolves once no new ticket has fitted for a set number of days.</dd>
+            </dl>
+          </article>
+        </div>
       </div>
     </section>
 
     <section id="scope" class="section" aria-labelledby="scope-title">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow">05</p>
+          <p class="eyebrow">06</p>
           <h2 id="scope-title">What this is, and what it isn’t</h2>
         </div>
         <div class="columns">
