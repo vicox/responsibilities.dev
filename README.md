@@ -6,25 +6,28 @@ tasks.* Plain HTML and CSS: no build step, framework, JavaScript or dependency.
 | File | Purpose |
 | --- | --- |
 | `index.html` | The page, with its title, description, canonical and Open Graph tags |
+| `impressum.html` | The Impressum (§ 5 DDG), linked from the footer of every page |
 | `styles.css` | Layout and type, light and dark |
 | `favicon.svg` | Icon |
 | `CNAME` | Custom domain for GitHub Pages: `responsibilities.dev` |
 | `.nojekyll` | Tells GitHub Pages to publish the files as they are, without Jekyll |
 | `tests/check.py` | Static checks (Python standard library) |
 
-Assets are linked with relative URLs (`styles.css`, `favicon.svg`, `#model`), so the page
-works the same at `https://responsibilities.dev/`, under a project path such as
-`https://<user>.github.io/responsibilities.dev/` and on a local server. The only absolute
-URLs are the canonical link and `og:url`, both `https://responsibilities.dev/`.
+Assets are linked with relative URLs (`styles.css`, `favicon.svg`, `#model`,
+`impressum.html`), so the pages work the same at `https://responsibilities.dev/`, under a
+project path such as `https://<user>.github.io/responsibilities.dev/` and on a local server.
+The only absolute URLs are each page's canonical link, the home page's `og:url` and the
+Impressum's `mailto:` contact.
 
 ## Preview and test
 
     python3 -m http.server 8000     # then open http://localhost:8000/
     python3 tests/check.py          # prints OK or the failed checks
 
-The checks cover well-formed markup, one `h1` and no skipped heading levels, the meta tags,
-that every link resolves and nothing external is loaded, the `CNAME`, and WCAG AA contrast of
-the colour pairs in both colour schemes.
+The checks cover, on both pages, well-formed markup, one `h1` and no skipped heading levels,
+the meta tags, a link to the Impressum, and that every link resolves (anchors on the other
+page included) and nothing external is loaded; plus the Impressum's required parts, the
+`CNAME`, and WCAG AA contrast of the colour pairs in both colour schemes.
 
 ## Deploy on GitHub Pages
 

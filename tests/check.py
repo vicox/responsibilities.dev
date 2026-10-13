@@ -8,6 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SITE = "https://responsibilities.dev/"
+PAGES = {"index.html": SITE, "impressum.html": SITE + "impressum.html"}  # page: canonical
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
 
 failures = []
@@ -19,8 +20,9 @@ def check(ok, message):
 
 
 class Page(HTMLParser):
-    def __init__(self):
+    def __init__(self, name):
         super().__init__()
+        self.name = name
         self.stack, self.ids, self.links, self.headings, self.meta = [], [], [], [], {}
         self.html_lang = self.title = self.canonical = None
         self.text_of = None
@@ -58,7 +60,7 @@ class Page(HTMLParser):
             return
         if not self.stack or self.stack[-1][0] != tag:
             opened = self.stack[-1] if self.stack else None
-            failures.append(f"index.html:{self.getpos()[0]}: </{tag}> does not close {opened}")
+            failures.append(f"{self.name}:{self.getpos()[0]}: </{tag}> does not close {opened}")
             return
         self.stack.pop()
 
@@ -74,35 +76,68 @@ def contrast(a, b):
     return (hi + 0.05) / (lo + 0.05)
 
 
-html = (ROOT / "index.html").read_text(encoding="utf-8")
+def parse(name):
+    html = (ROOT / name).read_text(encoding="utf-8")
+    page = Page(name)
+    page.feed(html)
+    page.close()
+    return html, page
+
+
+pages = {name: parse(name) for name in PAGES}
 css = (ROOT / "styles.css").read_text(encoding="utf-8")
 
-# Document structure
-check(html.startswith("<!doctype html>"), "index.html must start with <!doctype html>")
-page = Page()
-page.feed(html)
-page.close()
-check(not page.stack, f"unclosed elements: {page.stack}")
-check(page.html_lang == "en", "<html lang> must be en")
-check(len(page.ids) == len(set(page.ids)), "duplicate ids")
+for name, canonical in PAGES.items():
+    html, page = pages[name]
 
-# SEO / meta
-check(page.meta.get("charset") == ["utf-8"], "meta charset utf-8")
-check(page.meta.get("viewport") == ["width=device-width, initial-scale=1"], "meta viewport")
-check(page.title and "responsibilities" in page.title.lower() and len(page.title) <= 70, f"title: {page.title!r}")
-description = (page.meta.get("description") or [""])[0]
-check(70 <= len(description) <= 200, f"meta description length {len(description)}")
-check(page.canonical == SITE, f"canonical must be {SITE}")
+    # Document structure
+    check(html.startswith("<!doctype html>"), f"{name} must start with <!doctype html>")
+    check(not page.stack, f"{name}: unclosed elements: {page.stack}")
+    check(page.html_lang == "en", f"{name}: <html lang> must be en")
+    check(len(page.ids) == len(set(page.ids)), f"{name}: duplicate ids")
+
+    # SEO / meta
+    check(page.meta.get("charset") == ["utf-8"], f"{name}: meta charset utf-8")
+    check(page.meta.get("viewport") == ["width=device-width, initial-scale=1"], f"{name}: meta viewport")
+    check(page.title and "responsibilities" in page.title.lower() and len(page.title) <= 70, f"{name}: title: {page.title!r}")
+    description = (page.meta.get("description") or [""])[0]
+    check(70 <= len(description) <= 200, f"{name}: meta description length {len(description)}")
+    check(page.canonical == canonical, f"{name}: canonical must be {canonical}")
+
+    # Headings: one h1, no skipped levels
+    check(page.headings.count(1) == 1, f"{name}: exactly one h1")
+    for prev, cur in zip(page.headings, page.headings[1:]):
+        check(cur <= prev + 1, f"{name}: heading level jumps from h{prev} to h{cur}")
+
+    # Every page links to the Impressum
+    check(any(url == "impressum.html" for _, _, url in page.links), f"{name}: no link to impressum.html")
+
+    # Links: local URLs are relative, exist and, with a fragment, point at an id that exists;
+    # the only absolute URLs are mailto: and the page's own canonical.
+    for tag, rel, url in page.links:
+        if url.startswith("mailto:"):
+            continue
+        if re.match(r"^[a-z][a-z0-9+.-]*:", url, re.I) or url.startswith("//"):
+            check(url == canonical and rel == "canonical", f"{name}: unexpected absolute URL: {url}")
+            continue
+        path, _, fragment = url.partition("#")
+        path = path.split("?")[0]
+        check(not path.startswith("/"), f"{name}: root-relative URL breaks on a subpath: {url}")
+        target = ROOT / (path or name)
+        if target.is_dir():
+            target = target / "index.html"
+        check(target.exists(), f"{name}: missing local file: {url}")
+        if fragment:
+            linked = pages.get(target.relative_to(ROOT).as_posix())
+            check(linked is not None and fragment in linked[1].ids, f"{name}: anchor {url} has no target")
+    absolute = set(re.findall(r"https?://[^\s\"'<>)]+", html))
+    check(absolute <= {SITE, canonical}, f"{name}: external references: {sorted(absolute - {SITE, canonical})}")
+
+# The concept page: Open Graph and required content
+html, page = pages["index.html"]
 for key in ("og:type", "og:site_name", "og:url", "og:title", "og:description", "twitter:card"):
-    check(key in page.meta, f"missing meta {key}")
-check(page.meta.get("og:url") == [SITE], f"og:url must be {SITE}")
-
-# Headings: one h1, no skipped levels
-check(page.headings.count(1) == 1, "exactly one h1")
-for prev, cur in zip(page.headings, page.headings[1:]):
-    check(cur <= prev + 1, f"heading level jumps from h{prev} to h{cur}")
-
-# Required content
+    check(key in page.meta, f"index.html: missing meta {key}")
+check(page.meta.get("og:url") == [SITE], f"index.html: og:url must be {SITE}")
 for phrase in (
     "Give AI agents responsibilities, not just&nbsp;tasks.",
     "Observe deterministically.",
@@ -114,28 +149,26 @@ for phrase in (
     "Work in progress for days",
     "early experiment, not a finished product",
 ):
-    check(phrase in html, f"missing text: {phrase}")
+    check(phrase in html, f"index.html: missing text: {phrase}")
 
-# Links: in-page anchors resolve; local URLs are relative and exist; the only absolute URLs
-# are the canonical and og:url of the site itself.
-for tag, rel, url in page.links:
-    if url.startswith("#"):
-        check(url[1:] in page.ids, f"anchor {url} has no target")
-    elif re.match(r"^[a-z][a-z0-9+.-]*:", url, re.I) or url.startswith("//"):
-        check(url == SITE and rel == "canonical", f"unexpected absolute URL: {url}")
-    else:
-        check(not url.startswith("/"), f"root-relative URL breaks on a subpath: {url}")
-        target = (ROOT / url.split("#")[0].split("?")[0])
-        check(target.exists(), f"missing local file: {url}")
-absolute = re.findall(r"https?://[^\s\"'<>)]+", html)
-check(set(absolute) <= {SITE}, f"external references in index.html: {sorted(set(absolute) - {SITE})}")
+# The Impressum: German, marked as such, with an address and a contact email
+html, page = pages["impressum.html"]
+for phrase in (
+    '<div lang="de">',
+    "Angaben gemäß § 5 DDG",
+    "<address>",
+    "Kontakt",
+    'href="mailto:georg.schmidl@vicox.net"',
+):
+    check(phrase in html, f"impressum.html: missing text: {phrase}")
+
+# CSS: nothing external, balanced braces, every var() defined, and WCAG AA contrast in both
+# colour schemes
 check(not re.search(r"https?://|@import", css), "styles.css must not load anything external")
-
-# CSS: balanced braces, every var() defined, and WCAG AA contrast in both colour schemes
 check(css.count("{") == css.count("}"), "unbalanced braces in styles.css")
 defined = set(re.findall(r"(--[\w-]+)\s*:", css))
-for name in set(re.findall(r"var\((--[\w-]+)\)", css)):
-    check(name in defined, f"undefined custom property {name}")
+for prop in set(re.findall(r"var\((--[\w-]+)\)", css)):
+    check(prop in defined, f"undefined custom property {prop}")
 
 light_block = re.search(r":root\s*{(.*?)}", css, re.S).group(1)
 dark_block = re.search(r"prefers-color-scheme:\s*dark\)\s*{\s*:root\s*{(.*?)}", css, re.S).group(1)
