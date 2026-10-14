@@ -143,15 +143,61 @@ for phrase in (
     "Observe deterministically.",
     "Judge probabilistically.",
     "Remember persistently.",
-    "Signals",
-    "Case instructions",
-    "Persistent cases",
-    "Work in progress for days",
-    "Blocked dependencies",
-    "Recurring customer complaints",
+    "Five things that should never be forgotten.",
+    "The examples are illustrative.",
+    "How responsibilities work",
+    "A responsibility keeps watching.",
+    "<h3>Observe</h3>",
+    "Find what matters in the systems your team already uses.",
+    '<p class="tag">Signals</p>',
+    "<h3>Judge</h3>",
+    "Decide what genuinely needs attention, based on evidence and instructions.",
+    '<p class="tag">AI + rules</p>',
+    "<h3>Remember</h3>",
+    "Keep track of unresolved situations across days and agent runs.",
+    '<p class="tag">Persistent cases</p>',
+    "The agent does the work.",
+    "The responsibility makes sure it doesn’t get forgotten.",
     "People are accountable.",
 ):
     check(phrase in html, f"index.html: missing text: {phrase}")
+
+# The five examples, in order and word for word: title, situation, responsibility
+EXAMPLES = [
+    ("Don’t leave customers waiting.",
+     "A customer reported a problem. The team is working on it, but nobody has given the customer an update in days.",
+     "Make sure customers waiting for an answer get one."),
+    ("Don’t let reviews go unanswered.",
+     "A developer needs a review. The pull request is ready, but nobody responds. Progress comes to a halt.",
+     "Make sure work waiting for review doesn’t get stuck."),
+    ("Make sure customer-reported bugs get a decision.",
+     "Several customers report the same bug. The issues are logged, but nobody decides how urgently they need to be fixed.",
+     "Make sure customer-reported bugs are assessed and prioritized."),
+    ("Don’t lose customer-reported work.",
+     "A support ticket has been handed over to development. The development issue sits in the backlog while the customer is still waiting.",
+     "Make sure customer-reported development work doesn’t disappear into the backlog."),
+    ("Don’t let releases stall.",
+     "A release is waiting for testing. Nobody has taken ownership of the next step, and the planned release date is getting closer.",
+     "Make sure releases waiting for validation keep moving."),
+]
+examples = re.search(r'<ol class="examples"[^>]*>(.*?)</ol>', html, re.S)
+items = re.findall(r"<li>(.*?)</li>", examples.group(1), re.S) if examples else []
+check(len(items) == len(EXAMPLES), f"index.html: {len(items)} examples, expected {len(EXAMPLES)}")
+for item, (title, situation, responsibility) in zip(items, EXAMPLES):
+    check(f"<h3>{title}</h3>" in item, f"index.html: example title not verbatim: {title}")
+    check(f"<p>{situation}</p>" in item, f"index.html: situation not verbatim: {situation}")
+    check(f"<span>Responsibility</span> {responsibility}</p>" in item,
+          f"index.html: responsibility not verbatim: {responsibility}")
+
+# How responsibilities work: exactly three steps, after the examples
+flow = re.search(r'<ol class="flow"[^>]*>(.*?)</ol>', html, re.S)
+check(flow and flow.group(1).count("<li>") == 3, "index.html: the flow must have exactly three steps")
+check(html.find('id="examples"') < html.find('id="how"') < html.find('id="accountability"'),
+      "index.html: sections must be ordered examples, how, accountability")
+
+# Superseded examples stay gone
+for phrase in ("Work in progress for days", "Blocked dependencies", "Recurring customer complaints", "Jira"):
+    check(phrase not in html, f"index.html: superseded text: {phrase}")
 
 # Wording: the site presents a concept, not an app, prototype or experiment, and does not name
 # the internal implementation
@@ -186,7 +232,7 @@ themes = {"light": light, "dark": {**light, **dict(re.findall(r"(--[\w-]+):\s*(#
 pairs = [
     ("--ink", "--bg"), ("--ink", "--surface"), ("--ink", "--code-bg"),
     ("--muted", "--bg"), ("--muted", "--surface"),
-    ("--accent", "--bg"), ("--accent", "--surface"), ("--accent", "--accent-soft"),
+    ("--accent", "--bg"), ("--accent", "--surface"), ("--accent", "--accent-soft"), ("--ink", "--accent-soft"),
     ("--bg", "--ink"),  # skip link
 ]
 for theme, colours in themes.items():

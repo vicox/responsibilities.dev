@@ -13,7 +13,7 @@ tasks.* Plain HTML and CSS: no build step, framework, JavaScript or dependency.
 | `.nojekyll` | Tells GitHub Pages to publish the files as they are, without Jekyll |
 | `tests/check.py` | Static checks (Python standard library) |
 
-Assets are linked with relative URLs (`styles.css`, `favicon.svg`, `#model`,
+Assets are linked with relative URLs (`styles.css`, `favicon.svg`, `#examples`,
 `impressum.html`), so the pages work the same at `https://responsibilities.dev/`, under a
 project path such as `https://<user>.github.io/responsibilities.dev/` and on a local server.
 The only absolute URLs are each page's canonical link, the home page's `og:url` and the
@@ -26,7 +26,8 @@ Impressum's `mailto:` contact.
 
 The checks cover, on both pages, well-formed markup, one `h1` and no skipped heading levels,
 the meta tags, a link to the Impressum, and that every link resolves (anchors on the other
-page included) and nothing external is loaded; plus the home page's key content, a list of
+page included) and nothing external is loaded; plus the home page's key content (the five
+examples word for word, and exactly three steps in *How responsibilities work*), a list of
 words the site does not use, the Impressum's required parts, the
 `CNAME`, and WCAG AA contrast of the colour pairs in both colour schemes.
 
