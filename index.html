@@ -54,7 +54,7 @@
         <div class="section-head">
           <p class="eyebrow">01 · Tasks</p>
           <h2 id="tasks-title">Tasks end. Responsibilities don’t.</h2>
-          <p>Most agents are given tasks: a request comes in, work happens, an answer goes out, and the agent forgets. That is the right shape for “fix this bug” or “summarise this thread”. It is the wrong shape for “make sure nothing gets stuck”, which is never finished and never fits in a single run.</p>
+          <p>Most agents are given tasks: a request comes in, work happens, an answer goes out, and the agent forgets. That is the right shape for “fix this bug” or “summarize this thread”. It is the wrong shape for “make sure nothing gets stuck”, which is never finished and never fits in a single run.</p>
         </div>
         <div class="compare">
           <article class="card">
@@ -64,17 +64,17 @@
               <dt>Ends</dt><dd>When the answer is delivered.</dd>
               <dt>Looks at</dt><dd>Whatever is in the prompt.</dd>
               <dt>Remembers</dt><dd>Nothing, unless told again.</dd>
-              <dt>Example</dt><dd>“Find the customers who are waiting for an answer.”</dd>
+              <dt>Example</dt><dd>“List the work that is overdue.”</dd>
             </dl>
           </article>
           <article class="card card-accent">
             <h3>A responsibility</h3>
             <dl>
-              <dt>Starts</dt><dd>When it is defined.</dd>
+              <dt>Starts</dt><dd>When it is approved.</dd>
               <dt>Ends</dt><dd>Only when it is withdrawn.</dd>
               <dt>Looks at</dt><dd>The same signals, on every run.</dd>
               <dt>Remembers</dt><dd>Every case it opened, and why.</dd>
-              <dt>Example</dt><dd>“Make sure customers waiting for an answer get one.”</dd>
+              <dt>Example</dt><dd>“Make sure overdue work doesn’t go unnoticed.”</dd>
             </dl>
           </article>
         </div>
@@ -86,7 +86,7 @@
         <div class="section-head">
           <p class="eyebrow">02 · Examples</p>
           <h2 id="examples-title">Five things that should never be forgotten.</h2>
-          <p>None of these is ever done for good, and each is easy to drop when everyone is busy. That is what makes them responsibilities rather than tasks. The examples are illustrative.</p>
+          <p>None of these is ever done for good, and each is easy to drop when everyone is busy. That is what makes them responsibilities rather than tasks. The examples are illustrative, not a list of current features.</p>
         </div>
         <ol class="examples" role="list">
           <li>
@@ -128,23 +128,24 @@
         <ol class="flow" role="list">
           <li>
             <h3>Observe</h3>
-            <p>Find what matters in the systems your team already uses.</p>
+            <p>Signals identify what needs watching, using queries against your team’s data.</p>
             <p class="tag">Signals</p>
           </li>
           <li>
             <h3>Judge</h3>
-            <p>Decide what genuinely needs attention, based on evidence and instructions.</p>
+            <p>AI evaluates what needs attention, guided by instructions and evidence.</p>
             <p class="tag">AI + rules</p>
           </li>
           <li>
             <h3>Remember</h3>
-            <p>Keep track of unresolved situations across days and agent runs.</p>
+            <p>Persistent cases track unresolved situations and their history across runs.</p>
             <p class="tag">Persistent cases</p>
           </li>
         </ol>
         <p class="motto">
-          <span>The agent does the work.</span>
-          <span>The responsibility makes sure it doesn’t get forgotten.</span>
+          <span>The agent keeps watching.</span>
+          <span>The responsibility keeps track.</span>
+          <span>People stay accountable.</span>
         </p>
       </div>
     </section>
@@ -154,7 +155,7 @@
         <div class="section-head">
           <p class="eyebrow">04 · Accountability</p>
           <h2 id="accountability-title">Agents are responsible. People are accountable.</h2>
-          <p>A responsibility makes an agent responsible for keeping watch: noticing, judging and remembering, run after run. Accountability for the outcome stays with people. They decide what the agent watches, and they decide what happens next.</p>
+          <p>People define the responsibility, set the boundaries, and approve what the agent is allowed to do. The agent keeps watch and can carry out permitted actions. People remain accountable for the outcome.</p>
         </div>
         <div class="columns">
           <div>
@@ -162,14 +163,15 @@
             <ul>
               <li>Runs the signals on a schedule and records what they find.</li>
               <li>Proposes cases, each citing its evidence. Code, not the model, decides which ones open.</li>
+              <li>Carries out only the actions people have permitted, such as creating a page for each new case.</li>
               <li>Keeps every case, open or resolved, with the history that led to it.</li>
             </ul>
           </div>
           <div>
             <h3>People</h3>
             <ul>
-              <li>Define the intent, the signals and the case instructions. An agent can draft a responsibility, but it takes effect only once a person approves it.</li>
-              <li>Decide what to do about each case. Reassigning work, escalating a blocker or fixing a defect is their call, not the agent’s.</li>
+              <li>Define the signals, the instructions and any actions the agent may take. An agent can draft a responsibility, but it takes effect only once a person approves it.</li>
+              <li>Decide what to do about each case beyond the permitted actions. Reassigning work, escalating a blocker or fixing a defect is their call, not the agent’s.</li>
               <li>Can check any case: re-run its query, compare the judgment with its evidence and follow its history.</li>
             </ul>
           </div>
