@@ -281,7 +281,7 @@ h3 {
   margin: 0;
 }
 
-/* Examples: five equal cards, three over two with the second row centred */
+/* Examples: five equal cards (.card), three over two with the second row centered */
 
 .examples {
   display: grid;
@@ -293,14 +293,10 @@ h3 {
   counter-reset: example;
 }
 
-.examples li {
+.examples > li {
   grid-column: span 2;
   display: flex;
   flex-direction: column;
-  padding: clamp(1.25rem, 2.5vw, 1.75rem);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
   counter-increment: example;
 }
 
@@ -344,6 +340,38 @@ h3 {
   font-family: var(--mono);
   font-size: 0.8rem;
   font-weight: 400;
+}
+
+/* "How it works": closed by default, so the five cards stay easy to scan. */
+.examples details {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.examples summary {
+  width: fit-content;
+  padding-block: 0.25rem;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.examples details dl {
+  display: block;
+  margin: 0.5rem 0 0;
+}
+
+.examples details dt {
+  padding-top: 0;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+
+.examples details dd {
+  margin: 0.15rem 0 0;
+}
+
+.examples details dd + dt {
+  margin-top: 0.75rem;
 }
 
 @media (max-width: 60rem) {

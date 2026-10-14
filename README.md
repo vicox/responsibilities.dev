@@ -19,6 +19,11 @@ project path such as `https://<user>.github.io/responsibilities.dev/` and on a l
 The only absolute URLs are each page's canonical link, the home page's `og:url` and the
 Impressum's `mailto:` contact.
 
+Both pages link the stylesheet as `styles.css?v=<hash>`, the first eight hex digits of the
+SHA-256 of `styles.css`. GitHub Pages lets browsers and its CDN cache files for ten minutes, so
+without it new HTML can arrive with the previous stylesheet. After changing `styles.css`, run
+the checks: they print the link to use.
+
 ## Preview and test
 
     python3 -m http.server 8000     # then open http://localhost:8000/

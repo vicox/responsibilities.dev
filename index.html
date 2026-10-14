@@ -16,7 +16,7 @@
   <meta property="og:description" content="Observe deterministically. Judge probabilistically. Remember persistently. An architecture for AI agents whose work never finishes.">
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=ed3bcede">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -89,30 +89,85 @@
           <p>None of these is ever done for good, and each is easy to drop when everyone is busy. That is what makes them responsibilities rather than tasks. The examples are illustrative, not a list of current features.</p>
         </div>
         <ol class="examples" role="list">
-          <li>
+          <li class="card">
             <h3>Don’t leave customers waiting.</h3>
             <p>A customer reported a problem. The team is working on it, but nobody has given the customer an update in days.</p>
             <p class="responsibility"><span>Responsibility</span> Make sure customers waiting for an answer get one.</p>
+            <details>
+              <summary>How it works</summary>
+              <dl>
+                <dt>Signal</dt>
+                <dd>Customer support issues waiting for a response.</dd>
+                <dt>Instructions</dt>
+                <dd>Identify customers who haven’t received an update in several days and explain why follow-up is needed.</dd>
+                <dt>Case</dt>
+                <dd>Customer waiting for an update on a support issue.</dd>
+              </dl>
+            </details>
           </li>
-          <li>
+          <li class="card">
             <h3>Don’t let reviews go unanswered.</h3>
             <p>A developer needs a review. The pull request is ready, but nobody responds. Progress comes to a halt.</p>
             <p class="responsibility"><span>Responsibility</span> Make sure work waiting for review doesn’t get stuck.</p>
+            <details>
+              <summary>How it works</summary>
+              <dl>
+                <dt>Signal</dt>
+                <dd>Work items waiting for review.</dd>
+                <dt>Instructions</dt>
+                <dd>Identify reviews that have had no response for several days and explain why they need attention.</dd>
+                <dt>Case</dt>
+                <dd>Work item waiting for a review.</dd>
+              </dl>
+            </details>
           </li>
-          <li>
+          <li class="card">
             <h3>Make sure customer-reported bugs get a decision.</h3>
             <p>Several customers report the same bug. The issues are logged, but nobody decides how urgently they need to be fixed.</p>
             <p class="responsibility"><span>Responsibility</span> Make sure customer-reported bugs are assessed and prioritized.</p>
+            <details>
+              <summary>How it works</summary>
+              <dl>
+                <dt>Signal</dt>
+                <dd>Customer-reported bugs that have no priority yet.</dd>
+                <dt>Instructions</dt>
+                <dd>Identify bugs that have waited several days for a priority and explain why a decision is needed.</dd>
+                <dt>Case</dt>
+                <dd>Customer-reported bug waiting for a priority decision.</dd>
+              </dl>
+            </details>
           </li>
-          <li>
+          <li class="card">
             <h3>Don’t lose customer-reported work.</h3>
             <p>A support ticket has been handed over to development. The development issue sits in the backlog while the customer is still waiting.</p>
             <p class="responsibility"><span>Responsibility</span> Make sure customer-reported development work doesn’t disappear into the backlog.</p>
+            <details>
+              <summary>How it works</summary>
+              <dl>
+                <dt>Signal</dt>
+                <dd>Development issues marked as customer-reported that are still in the backlog.</dd>
+                <dt>Instructions</dt>
+                <dd>Identify customer-reported issues that have sat in the backlog for several days and explain why they need to be scheduled.</dd>
+                <dt>Case</dt>
+                <dd>Customer-reported issue waiting in the backlog.</dd>
+              </dl>
+            </details>
           </li>
-          <li>
+          <li class="card">
             <h3>Don’t let releases stall.</h3>
             <p>A release is waiting for testing. Nobody has taken ownership of the next step, and the planned release date is getting closer.</p>
             <p class="responsibility"><span>Responsibility</span> Make sure releases waiting for validation keep moving.</p>
+            <details>
+              <summary>How it works</summary>
+              <dl>
+                <dt>Signal</dt>
+                <dd>Work planned for the next release that is waiting for testing.</dd>
+                <dt>Instructions</dt>
+                <dd>Identify release work that has waited several days for testing and explain why it needs to move.</dd>
+                <dt>Case</dt>
+                <dd>Release work waiting for testing.</dd>
+              </dl>
+            </details>
           </li>
         </ol>
       </div>

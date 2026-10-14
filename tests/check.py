@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Static checks for the site. Standard library only: python3 tests/check.py"""
 
+import hashlib
 import re
 import sys
 from html.parser import HTMLParser
@@ -86,6 +87,13 @@ def parse(name):
 
 pages = {name: parse(name) for name in PAGES}
 css = (ROOT / "styles.css").read_text(encoding="utf-8")
+
+# The stylesheet URL carries a hash of styles.css. Pages serves it with max-age=600, so without the
+# hash a browser or CDN can pair new HTML with an older stylesheet for up to ten minutes.
+CSS_HREF = "styles.css?v=" + hashlib.sha256((ROOT / "styles.css").read_bytes()).hexdigest()[:8]
+for name in PAGES:
+    check(f'<link rel="stylesheet" href="{CSS_HREF}">' in pages[name][0],
+          f"{name}: the stylesheet link must be {CSS_HREF} (update it whenever styles.css changes)")
 
 for name, canonical in PAGES.items():
     html, page = pages[name]
@@ -184,13 +192,25 @@ EXAMPLES = [
      "Make sure releases waiting for validation keep moving."),
 ]
 examples = re.search(r'<ol class="examples"[^>]*>(.*?)</ol>', html, re.S)
-items = re.findall(r"<li>(.*?)</li>", examples.group(1), re.S) if examples else []
+items = re.findall(r'<li class="card">(.*?)</li>', examples.group(1), re.S) if examples else []
 check(len(items) == len(EXAMPLES), f"index.html: {len(items)} examples, expected {len(EXAMPLES)}")
 for item, (title, situation, responsibility) in zip(items, EXAMPLES):
     check(f"<h3>{title}</h3>" in item, f"index.html: example title not verbatim: {title}")
     check(f"<p>{situation}</p>" in item, f"index.html: situation not verbatim: {situation}")
     check(f"<span>Responsibility</span> {responsibility}</p>" in item,
           f"index.html: responsibility not verbatim: {responsibility}")
+    # Each card has a "How it works" disclosure, closed by default, with a Signal, Instructions and a Case
+    details = re.findall(r"<details[^>]*>", item)
+    check(details == ["<details>"], f"index.html: {title}: needs one closed <details>")
+    check("<summary>How it works</summary>" in item, f"index.html: {title}: missing How it works summary")
+    check(re.findall(r"<dt>(.*?)</dt>", item) == ["Signal", "Instructions", "Case"],
+          f"index.html: {title}: How it works must list Signal, Instructions, Case")
+for phrase in (
+    "<dd>Customer support issues waiting for a response.</dd>",
+    "<dd>Identify customers who haven’t received an update in several days and explain why follow-up is needed.</dd>",
+    "<dd>Customer waiting for an update on a support issue.</dd>",
+):
+    check(phrase in html, f"index.html: missing text: {phrase}")
 
 # How responsibilities work: exactly three steps, after the examples
 flow = re.search(r'<ol class="flow"[^>]*>(.*?)</ol>', html, re.S)
